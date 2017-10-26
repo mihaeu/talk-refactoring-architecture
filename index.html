@@ -54,18 +54,9 @@
     <script src="src/client/presentation.js"></script>
 </head>
 
-<!--
-  Wofür stehen die CSS-Klassen?
-  charred: Charred-Trail-Plugin aktivieren,
-  auto-fragment: alle <li> innerhalb von <ul> und <ol> in Fragments umwandeln, d.h. bei Tastendruck erst einblenden
--->
-<body class="charred auto-fragment">
+<body>
 
-<div class="i18n">
-    <span class="section-overview">Refactoring Architecture</span>
-</div>
-
-<!-- Titel-Slide -->
+<!-- Title-Slide -->
 <section data-background-image="images/ipc-cover.png" style="color:#fff;" data-background-size="cover">
     <h1 style="padding-top:20%;color:#fff;font-weight: bolder;">Architecture Refactoring</h1>
     <h3 style="color:#fff;">Moving Towards DDD</h3>
@@ -73,6 +64,15 @@
         <a style="color:#fff;" href="mailto:michael.haeuslmann@gmail.com">Michael Haeuslmann - @michaelhaeu</a><br>
     </p>
     <img src="images/tng.svg" alt="" width="250" style="vertical-align: bottom">
+    <!-- SPEAKER NOTES -->
+    <aside class="notes">
+        <ul>
+            <li>☕ break</li>
+            <li>3rd time at the IPC</li>
+            <li>architecture favorite topic</li>
+            <li>very important for quality</li>
+        </ul>
+    </aside>
 </section>
 
 <section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
@@ -84,28 +84,67 @@
 </section>
 
 <section data-background-image="images/tng-facts-figures.png" data-background-size="contain">
+    <!-- SPEAKER NOTES -->
+    <aside class="notes">
+        <ul>
+            <li>many big customers</li>
+            <li>some small projects mostly ML related</li>
+        </ul>
+    </aside>
 </section>
 
 <section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
     <img src="images/tng-project-avatar.gif" width="800">
 </section>
 
-<section data-background-image="images/tng-tag-cloud.png" data-background-size="contain"></section>
-
 <section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
     <h1>Refactoring Architecture is hard!</h1>
     <h2 class="fragment">Just rewrite!</h2>
+    <!-- SPEAKER NOTES -->
+    <aside class="notes">
+        <ul>
+            <li>never easy</li>
+            <li>but EASIER</li>
+        </ul>
+    </aside>
 </section>
 
-<section data-background-image="images/dubai-before.jpg" data-background-size="cover"></section>
+<section data-background-image="images/dubai-before.jpg" data-background-size="cover">
+    <!-- SPEAKER NOTES -->
+    <aside class="notes">
+        <ul>
+            <li>expectation</li>
+            <li>starting from scratch</li>
+            <li>legacy software != desert</li>
+        </ul>
+    </aside>
+</section>
 
 <section data-background-image="images/dubai-now.jpg" data-background-size="cover"></section>
 
-<section data-background-image="images/grail.jpg" data-background-size="cover"></section>
+<section data-background-image="images/grail.jpg" data-background-size="cover">
+    <!-- SPEAKER NOTES -->
+    <aside class="notes">
+        <ul>
+            <li>which movie?</li>
+            <li>lots of hidden boxes</li>
+            <li>forgotten features which are rarely used</li>
+            <li>still important</li>
+        </ul>
+    </aside>
+</section>
 
 <section data-background-image="images/ipc-default-tng.jpg" data-background-size="cover">
-    <h2>Case Study: vodafone.de</h2>
+    <h2>Case Study: Vodafone Kabeldeutschland</h2>
     <img src="images/vodafone.jpg" class="rounded">
+    <!-- SPEAKER NOTES -->
+    <aside class="notes">
+        <ul>
+            <li>previously kabeldeutschland</li>
+            <li>very complex 1mio LOC</li>
+            <li>1st task: analyse external rewrite</li>
+        </ul>
+    </aside>
 </section>
 
 <section data-background-image="images/rewrite.jpg" data-background-size="cover"></section>
@@ -646,14 +685,22 @@ function __construct($db) {
 </section>
 
 <section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
-    <h2>Separate reading from writing (CQRS)</h2>
+    <h2>Common Problems and Questions</h2>
+    <ul>
+        <li>using active record? &rArr; hide them behind a <code>Repository</code></li>
+        <li>do your controllers know what happens to the data?</li>
+        <li>do your controllers know where the data comes from?</li>
+        <li>how expensive would it be to implement event sourcing?</li>
+        <li>the source of data should not matter<br>(relational, document, service call, cache, ...)</li>
+    </ul>
+    <p class="fragment">Could you move your core code out of your "web repository"?</p>
 </section>
 
-<section>
-    <h2>Now the fun part begins</h2>
+<section data-background-image="images/success4.jpg" data-background-size="cover">
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.5);color:#fff;font-size: 2em;padding: 10px;">Let the fun begin!</span>
 </section>
 
-<section>
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
     <h2>Microservices</h2>
     <ul>
         <li>you already have your components with clear interfaces</li>
@@ -662,24 +709,41 @@ function __construct($db) {
     </ul>
 </section>
 
+<section data-background-image="images/micro-before.jpg" data-background-size="contain"></section>
+<section data-background-image="images/micro-after.jpg" data-background-size="contain"></section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Fallacies of distributed computing</h2>
+    <ul>
+        <li>The network is reliable.</li>
+        <li>Latency is zero.</li>
+        <li>Bandwidth is infinite.</li>
+        <li>The network is secure.</li>
+        <li>Topology doesn't change.</li>
+        <li>There is one administrator.</li>
+        <li>Transport cost is zero.</li>
+        <li>The network is homogeneous.</li>
+    </ul>
+</section>
+
 <section>
     <h2>Domain Driven Design (DDD)</h2>
     <ul>
         <li>we already built domain objects</li>
-        <li>aggregates should be easy to identify between the different components</li>
-        <li>layered architecture has been defined using constraints</li>
-        <li>introducing events is not free</li>
+        <li>aggregates should be easy to identify between the different components<br>it's what your facades should be using anyways</li>
+        <li>layered architecture has been ensured using constraints</li>
+        <li>service access is encapsulated</li>
+        <li>storage access is encapsulated</li>
+        <li>however: introducing events is not free</li>
     </ul>
 </section>
 
 <section data-background-image="images/command.jpg" data-background-size="cover">
-    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.3);color:#fff;font-size: 3em;">Step 5 - CQRS</span>
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.3);color:#fff;font-size: 3em;">Optional Step 5 - CQRS</span>
     <br>
     <br>
     <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.3);color:#fff;font-size: 2em;">Command Query Responsibility Segregation</span>
 </section>
-
-<section data-background-image="images/cqrs.png" data-background-size="contain"></section>
 
 <section>
     <h2>Event Sourcing</h2>
@@ -690,6 +754,59 @@ function __construct($db) {
         <li>application deals with commands and talks to repository</li>
         <li>repository maps what happened to events</li>
     </ul>
+</section>
+
+<section data-background-image="images/cqrs.png" data-background-size="contain"></section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Summary</h2>
+    <ul>
+        <li>architecture refactorings are costly and risky</li>
+        <li>make sure your goals are measurable</li>
+        <li>define and test architecture constraints</li>
+    </ul>
+    <br>
+    <br>
+    <ol>
+        <li>Knowledge Extraction (Domain modeling)</li>
+        <li>Inversion of Control</li>
+        <li>Abstract the delivery mechanism</li>
+        <li>Show Intent</li>
+    </ol>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Reading Recommendations</h2>
+
+    <div style="float:left; width: 20%;font-size: 0.8em;">
+        <img src="images/pmjones.png" alt="">
+        <br>
+        Modernizing Legacy Applications in PHP<br><small>(Paul M. Jones)</small>
+    </div>
+
+    <div style="float:left; width: 20%;font-size: 0.8em;">
+        <img src="images/clean.jpg" alt="">
+        <br>
+        Clean Architecture<br><small>(Robert C. Martin)</small>
+    </div>
+
+    <div style="float:left; width: 20%;font-size: 0.8em;">
+        <img src="images/poeaa.jpg" alt="">
+        <br>
+        Patterns of Enterprise Application Architecture<br><small>(Martin Fowler)</small>
+    </div>
+
+    <div style="float:left; width: 20%;font-size: 0.8em;">
+        <img src="images/working.jpg" alt="">
+        <br>
+        Working Effectively with Legacy Code<br><small>(Michael C. Feathers)</small>
+    </div>
+
+    <div style="float:left; width: 20%;font-size: 0.8em;">
+        <img src="images/domain.jpg" alt="">
+        <br>
+        Domain Driven Design<br><small>(Eric Evans)</small>
+    </div>
 </section>
 
 <section data-background-image="images/ipc-cover.png" style="color:#fff;" data-background-size="cover">
