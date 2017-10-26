@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Refactoring Architecture: Moving towards DDD</title>
+
+    <meta name="description" content="Refactoring Architecture: Moving towards DDD">
+    <meta name="author" content="Michael Haeuslmann">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="style/presentation.css">
+    <style>
+        @font-face {
+            font-family: FiraCode;
+            src: url(FiraCode-Regular.woff2);
+        }
+
+        .reveal code {
+            font-family: FiraCode;
+            background: #3f3f3f;
+            color: #dcdcdc;
+        }
+
+        :not(pre) code {
+            padding: 1px;
+            margin: 2px;
+        }
+
+        .reveal section img {
+            border: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0);
+        }
+
+        .reveal .progress {
+            height: 0;
+        }
+
+        .reveal .rounded {
+            border-radius: 5px;
+            border: 1px solid #333;
+            box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .reveal .invert {
+            color: #fff;
+        }
+    </style>
+    <script src="src/client/presentation.js"></script>
+</head>
+
+<!--
+  Wofür stehen die CSS-Klassen?
+  charred: Charred-Trail-Plugin aktivieren,
+  auto-fragment: alle <li> innerhalb von <ul> und <ol> in Fragments umwandeln, d.h. bei Tastendruck erst einblenden
+-->
+<body class="charred auto-fragment">
+
+<div class="i18n">
+    <span class="section-overview">Refactoring Architecture</span>
+</div>
+
+<!-- Titel-Slide -->
+<section data-background-image="images/ipc-cover.png" style="color:#fff;" data-background-size="cover">
+    <h1 style="padding-top:20%;color:#fff;font-weight: bolder;">Architecture Refactoring</h1>
+    <h3 style="color:#fff;">Moving Towards DDD</h3>
+    <p>
+        <a style="color:#fff;" href="mailto:michael.haeuslmann@gmail.com">Michael Haeuslmann - @michaelhaeu</a><br>
+    </p>
+    <img src="images/tng.svg" alt="" width="250" style="vertical-align: bottom">
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <div style="text-align: center;margin-right: 25px;">
+        <h3 style="display:inline;vertical-align: middle;">Michael Haeuslmann @ </h3>
+        <img src="images/tng2.svg" alt="" width="250" style="vertical-align: middle">
+    </div>
+    <img src="images/tng-bg.png" alt="">
+</section>
+
+<section data-background-image="images/tng-facts-figures.png" data-background-size="contain">
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <img src="images/tng-project-avatar.gif" width="800">
+</section>
+
+<section data-background-image="images/tng-tag-cloud.png" data-background-size="contain"></section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h1>Refactoring Architecture is hard!</h1>
+    <h2 class="fragment">Just rewrite!</h2>
+</section>
+
+<section data-background-image="images/dubai-before.jpg" data-background-size="cover"></section>
+
+<section data-background-image="images/dubai-now.jpg" data-background-size="cover"></section>
+
+<section data-background-image="images/grail.jpg" data-background-size="cover"></section>
+
+<section data-background-image="images/ipc-default-tng.jpg" data-background-size="cover">
+    <h2>Case Study: vodafone.de</h2>
+    <img src="images/vodafone.jpg" class="rounded">
+</section>
+
+<section data-background-image="images/rewrite.jpg" data-background-size="cover"></section>
+
+<section data-background-image="images/rewrite.jpg" data-background-size="cover">
+    <div style="font-size: 20em;color:red;">✗</div>
+</section>
+
+<section data-background-image="images/communication.jpg" data-background-size="cover">
+    <h2 style="font-weight: bolder;margin-left: 150px;">Communication<br><br>problems ...</h2>
+</section>
+
+<section data-background-image="images/grail.jpg" data-background-size="cover">
+    <h2 style="color:#EEE;font-weight: bolder;margin-top: 50%;">Lots of hidden business logic ...</h2>
+</section>
+
+<section data-background-image="images/bigbang.jpg" data-background-size="cover">
+    <h2 style="color:#EEE;font-weight: bolder;margin-top: 50%;">Big bang integration ...</h2>
+</section>
+
+<section data-background-image="images/sign.jpg" data-background-size="cover"></section>
+
+<section data-background-image="images/plan.jpg" data-background-size="cover">
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.1);font-size: 3em;">We need a plan!</span>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>What do we want?</h2>
+    <p>Architecture which ...</p>
+    <ul>
+        <li>supports the use cases and operation of the system</li>
+        <br>
+        <li>supports the maintenance of the system</li>
+        <br>
+        <li>supports the development of the system</li>
+        <br>
+        <li>supports the deployment of the system</li>
+        <br>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Good architecture is ...</h2>
+    <ul>
+        <li>... about intent not about methods/tools</li>
+        <br>
+        <li>... allows major decisions to be deferred</li>
+        <br>
+    </ul>
+    <p class="fragment">
+        - "Architecture, The Lost Years", Robert C. Martin
+    </p>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>What's the intent?</h2>
+    <img src="images/components.jpg" alt="">
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>What's the intent?</h2>
+    <img src="images/church.jpg" alt="">
+</section>
+
+<section data-background-image="images/ipc-default-tng-black.png" data-background-size="cover">
+    <h2 class="invert">What's the intent?</h2>
+    <br>
+    <img src="images/ci.png">
+</section>
+
+<section data-background-image="images/ipc-default-tng-black.png" data-background-size="cover">
+    <h2 class="invert">What's the intent?</h2>
+    <br>
+    <img src="images/ci2.png">
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <blockquote style="font-size: 2em;background-color: #EEE;box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.3);">
+        Good architecture is about intent not about methods or tools.
+        <br>
+        <br>
+        - Robert C. Martin ("Uncle Bob")
+    </blockquote>
+    <br>
+    <br>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <blockquote style="font-size: 2em;background-color: #EEE;box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.3);">
+        Good architecture allows major decisions to be deferred.
+        <br>
+        <br>
+        - Robert C. Martin ("Uncle Bob")
+    </blockquote>
+    <br>
+    <br>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>How do we find problems in our architecture?</h2>
+    <ul>
+        <li>read ...</li>
+        <li>read ...</li>
+        <li>read ...</li>
+        <li>read ...</li>
+        <li>read ...</li>
+    </ul>
+</section>
+
+<section data-background-image="images/stop.jpg" data-background-size="cover"></section>
+
+<section data-background-image="images/tools.jpg" data-background-size="cover">
+    <span style="font-size:3em;font-weight: bolder;background-color: rgba(255, 255, 255, 0.8);">We need some tools!</span>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>dePHPend</h2>
+    <img src="images/dephpend.svg" alt="">
+    <h3>Visualizations & Assertions</h3>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <img src="images/dephpend.svg" width="200">
+    <pre class="bash"><code data-trim data-noescape style="font-size: 0.6em;">
+<span class="fragment highlight-current-green">λ wget http://phar.dephpend.com/dephpend.phar -O ~/bin/dephpend</span>
+<span class="fragment highlight-current-green">λ dephpend --help
+      _      _____  _    _ _____               _
+     | |    |  __ \| |  | |  __ \             | |
+   __| | ___| |__) | |__| | |__) |__ _ __   __| |
+  / _` |/ _ \  ___/|  __  |  ___/ _ \ _ \ / _` |
+ | (_| |  __/ |    | |  | | |  |  __/ | | | (_| |
+  \__,_|\___|_|    |_|  |_|_|   \___|_| |_|\__,_| version 0.4
+
+ Usage: ...
+</span><span class="fragment highlight-current-green">λ dephpend <strong>text</strong> ~/workspace/dephpend/src
+Mihaeu\PhpDependencies\Util\AbstractMap --> Mihaeu\PhpDependencies\Util\Collection
+Mihaeu\PhpDependencies\Util\DI --> Mihaeu\PhpDependencies\Analyser\Analyser
+...
+</span>
+                    </code></pre>
+</section>
+
+<section>
+    <h2>Visualizations</h2>
+    <img src="images/animated-architecture.gif" alt="">
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <img src="images/laravel-routing.png" alt="" width="300">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="images/dephpend.svg" width="200">
+    <pre class="fragment"><code class="php" data-trim data-noescape>
+&lt;?php
+
+$cmd = shell_exec('dephpend text src --no-classes');
+$constraints = [
+    'Model.* --> .*View',
+    'View.*  --> .*Model',
+];
+$regex = '/('.implode(')|(', $constraints).')/x';
+
+if (preg_match($regex, $cmd)) {
+    echo 'Architecture violation'.PHP_EOL;
+    exit(1);
+}
+                    </code></pre>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <img src="images/dephpend.svg" alt="">
+    <br>
+    <br>
+    <code>https://github.com/mihaeu/dephpend</code>
+    <br>
+    <br>
+    <p>Whatever you end up using:</p>
+    <strong>Test your architecture!</strong>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <img src="images/pdepend.png" alt="">
+    <h2>Metrics</h2>
+    <ul>
+        <li>number of dependencies, dependents</li>
+        <br>
+        <li>package size</li>
+        <br>
+        <li>abstractness of code</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>pmd and PhpInspectionsEa to detect other architectural smells</h2>
+    <ul>
+        <li>gives you hints along the way</li>
+        <br>
+        <li>too many dependencies in a class</li>
+        <br>
+        <li>inheritance hierarchy too deep</li>
+        <br>
+        <li>static calls</li>
+        <br>
+    </ul>
+    <img src="images/pmd.png" style="float: right;">
+    <img src="images/inspections.png" style="float: right;">
+    <code>
+        https://phpmd.org/
+        https://github.com/kalessil/phpinspectionsea
+    </code>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>PhpStorm for refactorings and renaming</h2>
+    <ul>
+        <li>no vim is not an alternative</li>
+        <br>
+        <li>no neither is emacs</li>
+        <br>
+        <li>and don't get me started on Netbeans</li>
+        <br>
+    </ul>
+    <p class="fragment">Use a proper IDE!</p>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Refactoring Browser by Qafoo</h2>
+    <img src="images/refactoring-browser.jpg" class="rounded">
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>For JavaScript</h2>
+    <ul>
+        <li>Visualizations: grep for require/import + dot (graphviz)</li>
+        <br>
+        <li>Assertions: grep for require/import + scripts</li>
+        <br>
+        <li>pmd for JavaScript</li>
+        <br>
+        <li>WebStorm or VSCode</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>One more thing: Functional Tests</h2>
+    <p class="fragment"> &rArr; refactoring should not break existing functionality</p>
+    <p class="fragment"> &rArr; functional tests are more resilient towards architectural changes</p>
+    <img src="images/behat.png" class="fragment">
+    <br>
+    <img src="images/nightwatch.png" width="300" class="fragment">
+</section>
+
+<section data-background-image="images/sprint.jpg" data-background-size="cover">
+    <span style="font-size:2em;font-weight: bolder;background-color: rgba(255, 255, 255, 0.8);">Let's begin</span>
+</section>
+
+<section data-background-image="images/books.jpg" data-background-size="cover">
+    <span style="font-size:2em;font-weight: bolder;background-color: rgba(255, 255, 255, 0.8);">Step 1 - Knowledge extraction</span>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>What's this?</h2>
+    <br>
+    <pre><code class="php" data-trim>
+/** @var string */
+private $address;
+    </code></pre>
+    <ul>
+        <li>what does it contain?</li>
+        <li>how is it validated?</li>
+        <li>where is it validated?</li>
+        <li>is the validation always the same?</li>
+        <li>when is it populated?</li>
+        <li>who uses it?</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Or that?</h2>
+    <br>
+    <pre><code class="php" data-trim>
+/** @var array */
+private $address;
+    </code></pre>
+    <ul>
+        <li>not much better</li>
+        <li>most questions remain unanswered</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Is this okay?</h2>
+    <br>
+    <pre><code class="php" data-trim>
+class AddressStruct
+{
+    public $street;
+    public $zipCode;
+    public $city;
+}
+    </code></pre>
+    <ul>
+        <li>tiny step in the right direction</li>
+        <li>helps with usages</li>
+        <li>state is unknown and mutable</li>
+        <li>still difficult to refactor</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Immutable Domain Objects</h2>
+    <pre><code class="php" data-trim>
+class Address {
+    private $street;
+    private $zipCode;
+    private $city;
+
+    public function __construct(
+        Street $street, ZipCode $zipCode, City $city
+    ) {
+        // ...
+    }
+
+    public function street() : Street { return $this->street; }
+}
+    </code></pre>
+</section>
+
+<section data-background-image="images/success.jpg" data-background-size="cover"></section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Immutable Domain Objects</h2>
+    <ul>
+        <li>is the Address valid?</li>
+        <li>&rArr; as long as it exists it's valid</li>
+        <li>unused attributes?</li>
+        <li>&rArr; the IDE will know</li>
+        <li>adding/removing properties?</li>
+        <li>&rAarr; all related unit tests will break<br>(which is great)</li>
+        <li>what if a value changes?</li>
+        <li>&rArr; they can't</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Immutable Domain Objects</h2>
+    <pre><code class="php" data-trim>
+class ZipCode
+{
+    private $zipCode;
+
+    public function __construct(int $zipCode)
+    {
+        $this->ensureValidGermanZipCode($zipCode);
+
+        $this->zipCode = $zipCode;
+    }
+
+    private function ensureValidGermanZipCode(int $zipCode) : void
+    {
+        if ($zipCode < 10000 || $zipCode > 99999) {
+            throw new InvalidZipCodeException($zipCode);
+        }
+    }
+}
+    </code></pre>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Summary: Immutable Domain Objects</h2>
+    <ul>
+        <li>not an architectural refactoring, but important to reason about the business logic</li>
+        <li>looks easy, but very painful process</li>
+        <li>you'll find many inconsistencies along the way</li>
+        <li>Knowledge gain: "who talks to whom about what?"</li>
+        <li>Myth: arrays are more performant (*)</li>
+    </ul>
+    <p>
+        <small class="fragment">(*) <a href="https://www.slideshare.net/patrick.allaert/php-data-structures-and-the-impact-of-php-7-on-them-php-days-2015">PHP data structures and the impact of PHP 7 on them</a></small>
+    </p>
+</section>
+
+<section data-background-image="images/ioc.jpg" data-background-size="cover">
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.5);color:#fff;font-size: 2em;">Step 2 - Inversion of Control</span>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>What do I depend on?</h2>
+    <pre><code class="php" data-trim>
+class X
+{
+  public function __construct($dependencyContainer)
+  {
+    $this->dependencyContainer = $dependencyContainer;
+  }
+
+  // ... a few hundred lines later
+
+  public function someFunction()
+  {
+    $userRepository = $this->dependencyContainer->get('UserRepository');
+    $users = $userRepository->getAll();
+  }
+}
+    </code></pre>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>What do I depend on?</h2>
+    <pre><code class="php" data-trim>
+class X
+{
+  // ... a few hundred lines later
+
+  public function someFunction()
+  {
+    $users = DB::connection('foo')->select(/** ... */);
+  }
+}
+    </code></pre>
+    <br>
+    <p class="fragment"><strong>
+Don't make me think about stupid things!
+    </strong></p>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Dependency Injection</h2>
+    <ul>
+        <li>always use constructor dependency injection</li>
+        <li>never inject the dependency container itself</li>
+        <li>domain objects are "newables"</li>
+        <li>factories are fine</li>
+        <li>use a lib or roll your own, the less magic the better</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Common Problems</h2>
+    <h3>Side Effects in the Constructor</h3>
+    <pre><code class="php" data-trim>
+function __construct($db) {
+    $this->db = $db;
+    $this->init(); // oh oh
+}
+    </code></pre>
+    <ul>
+        <li>Option 1: lazy instantiation using e.g. factories</li>
+        <br>
+        <li>Option 2: Extract side effects (temporal coupling 😢)</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Common Problems</h2>
+    <h3>Static Usage</h3>
+    <pre><code class="php" data-trim>class UserHelper
+{
+    public static function isAuthorized() { /** ... */ }
+}</code></pre>
+    <p class="fragment">Wrap it!</p>
+    <pre class="fragment"><code class="php" data-trim>class UserHelperWrapper
+{
+    public function isAuthorized() {
+        return UserHelper::isAuthorized();
+    }
+}</code></pre>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Common Problems</h2>
+    <h3>Framework uses magic</h3>
+    <ul>
+        <li>common problem with most frameworks</li>
+        <br>
+        <li>magic instantiation of controllers</li>
+        <br>
+    </ul>
+    <ul style="list-style: none;">
+        <li>&rArr; if possible write a custom dispatcher</li>
+        <br>
+        <li>&rArr; strangler pattern</li>
+        <br>
+        <li>&rArr; some dependency containers support legacy frameworks</li>
+    </ul>
+</section>
+
+<section data-background-image="images/meaning.jpg" data-background-size="cover">
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.5);color:#fff;font-size: 2em;padding: 10px;">Step 3 - Show Intent</span>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Be explicit!</h2>
+    <ul>
+        <li>move away from the old-school MVC folder structure</li>
+        <br>
+        <li>your folder structure should reflect your architecture</li>
+        <br>
+        <li>your architecture should reflect your intent (domain)</li>
+    </ul>
+    <p class="fragment"><strong>
+        IT is hard, don't make me think about stupid things!
+    </strong></p>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Cohesion</h2>
+    <blockquote style="background-color: #EEE;box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.3);">
+        Measure of how well modules fits together.
+    </blockquote>
+    <br>
+    <ul>
+        <li>Coincidental cohesion</li>
+        <li>Logical association</li>
+        <li>Temporal cohesion</li>
+        <li>Sequential cohesion</li>
+        <li>Functional cohesion</li>
+    </ul>
+    <br>
+    <p class="fragment">
+        In other words: things that are highly cohesive should be grouped together
+    </p>
+</section>
+
+<section data-background-image="images/delivery.jpg" data-background-size="cover">
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.5);color:#fff;font-size: 2em;">Step 4 - Abstract the</span>
+    <br>
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.5);color:#fff;font-size: 2em;">delivery mechanism</span>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Abstract the framework/database/delivery mechanism</h2>
+    <ul>
+        <li>the web is a delivery mechanism</li>
+        <li>your framework is a delivery mechanism</li>
+        <li>delivery mechanisms have nothing to do with your core application</li>
+        <li>the source of data should not matter<br>(relational, document, service call, cache, ...)</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-default-tng.png" data-background-size="cover">
+    <h2>Separate reading from writing (CQRS)</h2>
+</section>
+
+<section>
+    <h2>Now the fun part begins</h2>
+</section>
+
+<section>
+    <h2>Microservices</h2>
+    <ul>
+        <li>you already have your components with clear interfaces</li>
+        <li>those interfaces have to be mapped to REST/GraphQL/SOAP requests/responses</li>
+        <li>that's about it<br>(given the previous steps were successful)</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Domain Driven Design (DDD)</h2>
+    <ul>
+        <li>we already built domain objects</li>
+        <li>aggregates should be easy to identify between the different components</li>
+        <li>layered architecture has been defined using constraints</li>
+        <li>introducing events is not free</li>
+    </ul>
+</section>
+
+<section data-background-image="images/command.jpg" data-background-size="cover">
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.3);color:#fff;font-size: 3em;">Step 5 - CQRS</span>
+    <br>
+    <br>
+    <span style="font-weight: bolder;background: rgba(0, 0, 0, 0.3);color:#fff;font-size: 2em;">Command Query Responsibility Segregation</span>
+</section>
+
+<section data-background-image="images/cqrs.png" data-background-size="contain"></section>
+
+<section>
+    <h2>Event Sourcing</h2>
+    <ul>
+        <li>the data source is abstract (e.g. repository)</li>
+        <li>the rest of the application doesn't care about the source</li>
+        <li>send requests from a client through the command bus </li>
+        <li>application deals with commands and talks to repository</li>
+        <li>repository maps what happened to events</li>
+    </ul>
+</section>
+
+<section data-background-image="images/ipc-cover.png" style="color:#fff;" data-background-size="cover">
+    <h1 style="padding-top:30%;color:#fff;font-weight: bolder;">Thank you!</h1>
+    <p>
+        <a style="color:#fff;" href="mailto:michael.haeuslmann@gmail.com">Michael Haeuslmann - @michaelhaeu</a><br>
+    </p>
+    <br>
+    <br>
+    <br>
+    <img src="images/tng.svg" alt="" width="250" style="vertical-align: bottom">
+</section>
+
+<section data-background-image="images/ipc-cover.png" style="color:#fff;" data-background-size="cover">
+    <h2 style="padding-top:23%;color:#fff;font-weight: bolder;">Credits</h2>
+    <pre style="overflow: scroll;width: 800px; height: 400px;background-color: #fff;color:#000;">
+Stock photos from pexel.com
+Indiana Jones http://raven.theraider.net/showthread.php?t=8100&page=7
+Big Bang https://www.youtube.com/watch?v=hDcWqidxvz4
+CQRS à la Greg Young - Mark Nijhof
+Cohesion https://courses.cs.washington.edu/courses/cse403/96sp/coupling-cohesion.html
+    </pre>
+</section>
+
+</body>
+</html>
