@@ -37,7 +37,7 @@
 		<g i:extraneous="self">
 			<g id="Ebene_1" i:layer="yes" i:dimmedPercent="50" i:rgbTrio="#4F008000FFFF">
 				<g>
-					<path i:knockout="Off" fill="#FFFFFF" d="M400,64H0V0h400V64z"/>
+					<path i:knockout="Off" fill="none" d="M400,64H0V0h400V64z"/>
 					<g>
 						<g>
 							<path i:knockout="Off" fill="#A2A7AE" d="M203.781,3.403h-37.674v5.302h37.674V3.403z"/>
